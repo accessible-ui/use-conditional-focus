@@ -1,7 +1,7 @@
 <hr>
 <div align="center">
   <h1 align="center">
-    @accessible/use-conditional-focus
+    useConditionalFocus()
   </h1>
 </div>
 
@@ -9,11 +9,11 @@
   <a href="https://bundlephobia.com/result?p=@accessible/use-conditional-focus">
     <img alt="Bundlephobia" src="https://img.shields.io/bundlephobia/minzip/@accessible/use-conditional-focus?style=for-the-badge&labelColor=24292e">
   </a>
-  <a aria-label="Code coverage report" href="https://codecov.io/gh/accessible-ui/accessible">
-    <img alt="Code coverage" src="https://img.shields.io/codecov/c/gh/accessible-ui/accessible?style=for-the-badge&labelColor=24292e">
-  </a>
-  <a aria-label="Build status" href="https://travis-ci.org/accessible-ui/accessible">
-    <img alt="Build status" src="https://img.shields.io/travis/accessible-ui/accessible?style=for-the-badge&labelColor=24292e">
+  <!--<a aria-label="Code coverage report" href="https://codecov.io/gh/accessible-ui/use-conditional-focus">
+    <img alt="Code coverage" src="https://img.shields.io/codecov/c/gh/accessible-ui/use-conditional-focus?style=for-the-badge&labelColor=24292e">
+  </a>-->
+  <a aria-label="Build status" href="https://travis-ci.org/accessible-ui/use-conditional-focus">
+    <img alt="Build status" src="https://img.shields.io/travis/accessible-ui/use-conditional-focus?style=for-the-badge&labelColor=24292e">
   </a>
   <a aria-label="NPM version" href="https://www.npmjs.com/package/@accessible/use-conditional-focus">
     <img alt="NPM Version" src="https://img.shields.io/npm/v/@accessible/use-conditional-focus?style=for-the-badge&labelColor=24292e">
@@ -26,21 +26,41 @@
 <pre align="center">npm i @accessible/use-conditional-focus</pre>
 <hr>
 
-A React hook that will focus elements conditionally
+A React hook that will focus elements conditionally. By default this will focus on the first focusable
+child of the provided root element, but you can optionally include the root as well.
 
 ## Quick Start
 
 ```jsx harmony
-import _ from '@accessible/use-conditional-focus'
+import useConditionalFocus from '@accessible/use-conditional-focus'
+
+const Component = () => {
+  const [visible, setVisible] = useState(false)
+  const rootRef = useConditionalFocus(visible)
+  return (
+    <div>
+      <div ref={rootRef}>
+        // This button will be focused when `visible` is true
+        <button onClick={() => setVisible(false)}>Close me</button>
+      </div>
+      <button onClick={() => setVisible(true)}>Click me</button>
+    </div>
+  )
+}
 ```
 
 ## API
 
-### Props
+### `useConditionalFocus(shouldFocus: boolean, includeRoot: boolean)`
 
-| Prop | Type | Default | Required? | Description |
-| ---- | ---- | ------- | --------- | ----------- |
-|      |      |         |           |             |
+#### Arguments
+
+| Prop        | Type      | Default | Required? | Description                                                                        |
+| ----------- | --------- | ------- | --------- | ---------------------------------------------------------------------------------- |
+| shouldFocus | `boolean` | `false` | `Yes`     | Provide a `true` value here to focus the first focusable child in the element.     |
+| includeRoot | `boolean` | `false` | `No`      | When `true` this will try to focus on the root element in addition to its children |
+
+#### Returns `MutableRefObject<any>`
 
 ## LICENSE
 

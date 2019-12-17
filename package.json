@@ -1,16 +1,18 @@
 {
   "name": "@accessible/use-conditional-focus",
   "version": "1.0.0",
-  "homepage": "https://github.com/accessible-ui/accessible#readme",
-  "repository": "github:accessible-ui/accessible",
-  "bugs": "https://github.com/accessible-ui/accessible/issues",
-  "author": "Jared Lunde <jared@BeStellar.co> (https://jaredLunde.com)",
+  "homepage": "https://github.com/accessible-ui/use-conditional-focus#readme",
+  "repository": "github:accessible-ui/use-conditional-focus",
+  "bugs": "https://github.com/accessible-ui/use-conditional-focus/issues",
+  "author": "Jared Lunde <jared.lunde@gmail.com> (https://jaredLunde.com)",
   "license": "MIT",
-  "description": "",
+  "description": "A React hook that will focus elements conditionally",
   "keywords": [
     "react",
-    "react component",
-    "use conditional focus"
+    "react hook",
+    "use conditional focus",
+    "useconditionalfocus",
+    "focus management"
   ],
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
@@ -55,6 +57,7 @@
     "@types/react-dom": "latest",
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
+    "babel-plugin-optimize-react": "^0.0.4",
     "cross-env": "latest",
     "eslint": "latest",
     "eslint-import-resolver-jest": "latest",
@@ -72,6 +75,12 @@
     "ts-jest": "latest",
     "typescript": "latest"
   },
-  "dependencies": {},
-  "peerDependencies": {}
+  "dependencies": {
+    "@accessible/tabbable": "^1.0.4",
+    "@react-hook/passive-layout-effect": "^1.0.2",
+    "raf": "^3.4.1"
+  },
+  "peerDependencies": {
+    "react": ">16.8"
+  }
 }
