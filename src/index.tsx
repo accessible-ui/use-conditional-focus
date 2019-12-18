@@ -19,8 +19,14 @@ const useConditionalFocus = (
       }
 
       raf(doFocus)
-      current.addEventListener('transitionend', doFocus)
-      return (): void => current.removeEventListener('transitionend', doFocus)
+      const handleTransitionEnd = () => {
+        doFocus()
+        current.removeEventListener('transitionend', handleTransitionEnd)
+      }
+
+      current.addEventListener('transitionend', handleTransitionEnd)
+      return (): void =>
+        current.removeEventListener('transitionend', handleTransitionEnd)
     }
   }, [ref.current, shouldFocus])
 
