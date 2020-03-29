@@ -5,7 +5,8 @@ import useLayoutEffect from '@react-hook/passive-layout-effect'
 
 const useConditionalFocus = (
   shouldFocus = false,
-  includeRoot = false
+  includeRoot = false,
+  preventScroll = false
 ): MutableRefObject<any> => {
   const ref = useRef<any>(null)
 
@@ -15,7 +16,7 @@ const useConditionalFocus = (
       // Focuses on the first focusable element
       const doFocus = (): void => {
         const tabbableEls = tabbable(current, includeRoot)
-        if (tabbableEls.length > 0) tabbableEls[0].focus()
+        if (tabbableEls.length > 0) tabbableEls[0].focus({preventScroll})
       }
 
       raf(doFocus)

@@ -51,14 +51,15 @@ const Component = () => {
 
 ## API
 
-### `useConditionalFocus(shouldFocus: boolean, includeRoot: boolean)`
+### `useConditionalFocus(shouldFocus: boolean, includeRoot: boolean, preventScroll: boolean)`
 
 #### Arguments
 
-| Prop        | Type      | Default | Required? | Description                                                                        |
-| ----------- | --------- | ------- | --------- | ---------------------------------------------------------------------------------- |
-| shouldFocus | `boolean` | `false` | `Yes`     | Provide a `true` value here to focus the first focusable child in the element.     |
-| includeRoot | `boolean` | `false` | `No`      | When `true` this will try to focus on the root element in addition to its children |
+| Prop          | Type      | Default | Required? | Description                                                                                                          |
+| ------------- | --------- | ------- | --------- | -------------------------------------------------------------------------------------------------------------------- |
+| shouldFocus   | `boolean` | `false` | `Yes`     | Provide a `true` value here to focus the first focusable child in the element.                                       |
+| includeRoot   | `boolean` | `false` | `No`      | When `true` this will try to focus on the root element in addition to its children.                                  |
+| preventScroll | `boolean` | `false` | `No`      | When `true` this will prevent your browser from scrolling the document to bring the newly-focused element into view. |
 
 #### Returns `MutableRefObject<any>`
 
