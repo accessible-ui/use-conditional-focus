@@ -3,11 +3,29 @@ import raf from 'raf'
 import tabbable from '@accessible/tabbable'
 import useLayoutEffect from '@react-hook/passive-layout-effect'
 
+export type ConditionalFocusOptions = {
+  includeRoot?: boolean
+  preventScroll?: boolean
+} | boolean
+
+const defaultOptions: ConditionalFocusOptions = {
+  includeRoot: false,
+  preventScroll: false
+}
+
 const useConditionalFocus = (
   shouldFocus = false,
-  includeRoot = false
-): MutableRefObject<any> => {
+  options = defaultOptions as ConditionalFocusOptions): MutableRefObject<any> => {
   const ref = useRef<any>(null)
+
+  if (typeof options === 'boolean') {
+    options = {
+      ...defaultOptions,
+      includeRoot: options
+    }
+  }
+
+  const {includeRoot, preventScroll} = options
 
   useLayoutEffect(() => {
     const current = ref.current
@@ -15,7 +33,7 @@ const useConditionalFocus = (
       // Focuses on the first focusable element
       const doFocus = (): void => {
         const tabbableEls = tabbable(current, includeRoot)
-        if (tabbableEls.length > 0) tabbableEls[0].focus()
+        if (tabbableEls.length > 0) tabbableEls[0].focus({preventScroll})
       }
 
       raf(doFocus)
