@@ -9,9 +9,9 @@
   <a href="https://bundlephobia.com/result?p=@accessible/use-conditional-focus">
     <img alt="Bundlephobia" src="https://img.shields.io/bundlephobia/minzip/@accessible/use-conditional-focus?style=for-the-badge&labelColor=24292e">
   </a>
-  <!--<a aria-label="Code coverage report" href="https://codecov.io/gh/accessible-ui/use-conditional-focus">
+  <a aria-label="Code coverage report" href="https://codecov.io/gh/accessible-ui/use-conditional-focus">
     <img alt="Code coverage" src="https://img.shields.io/codecov/c/gh/accessible-ui/use-conditional-focus?style=for-the-badge&labelColor=24292e">
-  </a>-->
+  </a>
   <a aria-label="Build status" href="https://travis-ci.org/accessible-ui/use-conditional-focus">
     <img alt="Build status" src="https://img.shields.io/travis/accessible-ui/use-conditional-focus?style=for-the-badge&labelColor=24292e">
   </a>
@@ -51,23 +51,28 @@ const Component = () => {
 
 ## API
 
-### `useConditionalFocus(shouldFocus: boolean, options: {includeRoot: boolean, preventScroll: boolean)}`
+```tsx
+useConditionalFocus<T extends HTMLElement = any>(
+  shouldFocus: boolean,
+  options: {includeRoot: boolean, preventScroll: boolean}
+)
+```
 
 #### Arguments
 
-| Prop          | Type      | Default | Required? | Description                                                                                                          |
-| ------------- | --------- | ------- | --------- | -------------------------------------------------------------------------------------------------------------------- |
-| shouldFocus   | `boolean` | `false` | `Yes`     | Provide a `true` value here to focus the first focusable child in the element.                                       |
-| options       | `object` \ `boolean` | `{includeRoot: false, preventScroll: false}` | `No`      | See `options`. Optionally pass a `boolean` instead (legacy fallback for `includeRoot`). When `true` this will try to focus on the root element in addition to its children.                                  |
+| Prop        | Type                                                       | Default                                      | Required? | Description                                                                    |
+| ----------- | ---------------------------------------------------------- | -------------------------------------------- | --------- | ------------------------------------------------------------------------------ |
+| shouldFocus | `boolean`                                                  | `false`                                      | `Yes`     | Provide a `true` value here to focus the first focusable child in the element. |
+| options     | [`UseConditionalFocusOptions`](#useconditonalfocusoptions) | `{includeRoot: false, preventScroll: false}` | `No`      | See [`UseConditionalFocusOptions`](#useconditonalfocusoptions).                |
 
-#### Options
+#### `UseConditonalFocusOptions`
 
 | Prop          | Type      | Default | Required? | Description                                                                                                          |
 | ------------- | --------- | ------- | --------- | -------------------------------------------------------------------------------------------------------------------- |
 | includeRoot   | `boolean` | `false` | `No`      | When `true` this will try to focus on the root element in addition to its children.                                  |
 | preventScroll | `boolean` | `false` | `No`      | When `true` this will prevent your browser from scrolling the document to bring the newly-focused element into view. |
 
-#### Returns `MutableRefObject<any>`
+#### Returns `MutableRefObject<T>`
 
 ## LICENSE
 

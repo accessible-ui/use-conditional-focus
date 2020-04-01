@@ -1,22 +1,119 @@
-/* jest */
-// import React, {useState} from 'react'
-// import {render, fireEvent} from '@testing-library/react'
-// import useConditionalFocus from './index'
+import React, {useState} from 'react'
+import {render, act, fireEvent} from '@testing-library/react'
+import * as raf from 'raf'
+import useFocus from './index'
 
-describe('useConditionalFocus()', () => {
-  it('passes', () => {
-    expect(1).toBe(1)
-  })
-  /*it('should focus when true', () => {
-    const Component = () => {
-      const ref = useConditionalFocus(true)
-      const [child, setChild] = useState<string | null>(null)
-      return <div ref={ref}><button data-testid='btn' onFocus={() => setChild('focused')} children={child}/></div>
+describe('useFocus()', () => {
+  // @ts-ignore
+  beforeEach(raf.reset)
+
+  it('should focus when true', () => {
+    const Component = ({focus}) => {
+      const ref = useFocus(focus)
+      const [child, setChild] = useState<string | null>('unfocused')
+
+      return (
+        <div ref={ref} data-testid="container">
+          <button
+            data-testid="btn"
+            onFocus={() => setChild('focused')}
+            children={child}
+          />
+        </div>
+      )
     }
-    const result = render(<Component/>)
-    console.log(document.activeElement)
-    expect(result.asFragment()).toMatchSnapshot()
-    fireEvent.blur(result.getByTestId('btn'))
-    expect(result.asFragment()).toMatchSnapshot()
-  })*/
+
+    const result = render(<Component focus={false} />)
+    const containerInstance = result.getByTestId('container')
+    const btnInstance = result.getByTestId('btn')
+    // @ts-ignore
+    Object.defineProperty(btnInstance, 'offsetParent', {
+      value: containerInstance,
+    })
+    // @ts-ignore
+    btnInstance.node = {
+      type: 'button',
+    }
+    // @ts-ignore
+    containerInstance.querySelectorAll = () => [btnInstance]
+    expect(btnInstance.textContent).toBe('unfocused')
+    result.rerender(<Component focus={true} />)
+    // @ts-ignort
+    expect(result.getByTestId('btn').textContent).toBe('unfocused')
+    // @ts-ignore
+    act(() => raf.step({count: 1}))
+    expect(result.getByTestId('btn').textContent).toBe('focused')
+  })
+
+  it('should focus when true and transition has ended', () => {
+    const Component = ({focus}) => {
+      const ref = useFocus(focus)
+      const [child, setChild] = useState<string | null>('unfocused')
+
+      return (
+        <div ref={ref} data-testid="container">
+          <button
+            data-testid="btn"
+            onFocus={() => setChild('focused')}
+            children={child}
+          />
+        </div>
+      )
+    }
+
+    const result = render(<Component focus={false} />)
+    const containerInstance = result.getByTestId('container')
+    const btnInstance = result.getByTestId('btn')
+    // @ts-ignore
+    Object.defineProperty(btnInstance, 'offsetParent', {
+      value: containerInstance,
+    })
+    // @ts-ignore
+    btnInstance.node = {
+      type: 'button',
+    }
+    // @ts-ignore
+    containerInstance.querySelectorAll = () => [btnInstance]
+    expect(btnInstance.textContent).toBe('unfocused')
+    result.rerender(<Component focus={true} />)
+    expect(result.getByTestId('btn').textContent).toBe('unfocused')
+    fireEvent.transitionEnd(containerInstance)
+    expect(result.getByTestId('btn').textContent).toBe('focused')
+  })
+
+  it('should not focus when elements are not tabbable', () => {
+    const Component = ({focus}) => {
+      const ref = useFocus(focus)
+      const [child, setChild] = useState<string | null>('unfocused')
+
+      return (
+        <div ref={ref} data-testid="container">
+          <button
+            data-testid="btn"
+            onFocus={() => setChild('focused')}
+            children={child}
+          />
+        </div>
+      )
+    }
+
+    const result = render(<Component focus={false} />)
+    const containerInstance = result.getByTestId('container')
+    const btnInstance = result.getByTestId('btn')
+    // @ts-ignore
+    Object.defineProperty(btnInstance, 'offsetParent', {
+      value: null,
+    })
+    // @ts-ignore
+    btnInstance.node = {
+      type: 'button',
+    }
+    // @ts-ignore
+    containerInstance.querySelectorAll = () => [btnInstance]
+    expect(btnInstance.textContent).toBe('unfocused')
+    result.rerender(<Component focus={true} />)
+    expect(result.getByTestId('btn').textContent).toBe('unfocused')
+    fireEvent.transitionEnd(containerInstance)
+    expect(result.getByTestId('btn').textContent).toBe('unfocused')
+  })
 })

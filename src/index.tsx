@@ -3,25 +3,43 @@ import raf from 'raf'
 import tabbable from '@accessible/tabbable'
 import useLayoutEffect from '@react-hook/passive-layout-effect'
 
-export type ConditionalFocusOptions = {
-  includeRoot?: boolean
-  preventScroll?: boolean
-} | boolean
+export type ConditionalFocusOptions =
+  | {
+      includeRoot?: boolean
+      preventScroll?: boolean
+    }
+  | boolean
 
 const defaultOptions: ConditionalFocusOptions = {
   includeRoot: false,
-  preventScroll: false
+  preventScroll: false,
 }
 
-const useConditionalFocus = (
-  shouldFocus = false,
-  options = defaultOptions as ConditionalFocusOptions): MutableRefObject<any> => {
-  const ref = useRef<any>(null)
+let DID_WARN = false
 
+function useConditionalFocus<T extends HTMLElement = any>(
+  shouldFocus = false,
+  options = defaultOptions
+): MutableRefObject<T | null> {
+  const ref = useRef<T | null>(null)
+
+  // istanbul ignore next
   if (typeof options === 'boolean') {
+    if (
+      typeof process !== 'undefined' &&
+      process.env.NODE_ENV !== 'production'
+    ) {
+      if (DID_WARN === false) {
+        console.warn(
+          '[@accessible-ui/use-conditional-focus] Using a `boolean` for the second argument has been deprecated. Use `{includeRoot: false}` instead.'
+        )
+        DID_WARN = true
+      }
+    }
+
     options = {
-      ...defaultOptions,
-      includeRoot: options
+      preventScroll: false,
+      includeRoot: options,
     }
   }
 
