@@ -1,21 +1,7 @@
 import {MutableRefObject, useRef} from 'react'
-import raf from 'raf'
+import {raf, caf} from '@essentials/raf'
 import tabbable from '@accessible/tabbable'
 import useLayoutEffect from '@react-hook/passive-layout-effect'
-
-export type ConditionalFocusOptions =
-  | {
-      includeRoot?: boolean
-      preventScroll?: boolean
-    }
-  | boolean
-
-const defaultOptions: ConditionalFocusOptions = {
-  includeRoot: false,
-  preventScroll: false,
-}
-
-let DID_WARN = false
 
 function useConditionalFocus<T extends HTMLElement = any>(
   shouldFocus = false,
@@ -47,6 +33,7 @@ function useConditionalFocus<T extends HTMLElement = any>(
 
   useLayoutEffect(() => {
     const current = ref.current
+
     if (current && shouldFocus) {
       // Focuses on the first focusable element
       const doFocus = (): void => {
@@ -54,19 +41,35 @@ function useConditionalFocus<T extends HTMLElement = any>(
         if (tabbableEls.length > 0) tabbableEls[0].focus({preventScroll})
       }
 
-      raf(doFocus)
+      const ptr = raf(doFocus)
       const handleTransitionEnd = () => {
         doFocus()
         current.removeEventListener('transitionend', handleTransitionEnd)
       }
 
       current.addEventListener('transitionend', handleTransitionEnd)
-      return (): void =>
+      return (): void => {
         current.removeEventListener('transitionend', handleTransitionEnd)
+        caf(ptr)
+      }
     }
-  }, [ref.current, shouldFocus])
+  }, [ref, shouldFocus, includeRoot, preventScroll])
 
   return ref
 }
+
+export type ConditionalFocusOptions =
+  | {
+      includeRoot?: boolean
+      preventScroll?: boolean
+    }
+  | boolean
+
+const defaultOptions: ConditionalFocusOptions = {
+  includeRoot: false,
+  preventScroll: false,
+}
+
+let DID_WARN = false
 
 export default useConditionalFocus

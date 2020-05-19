@@ -1,11 +1,12 @@
 import React, {useState} from 'react'
 import {render, act, fireEvent} from '@testing-library/react'
-import * as raf from 'raf'
+// @ts-ignore
+import {reset, step} from '@essentials/raf'
 import useFocus from './index'
 
 describe('useFocus()', () => {
   // @ts-ignore
-  beforeEach(raf.reset)
+  beforeEach(reset)
 
   it('should focus when true', () => {
     const Component = ({focus}) => {
@@ -41,7 +42,7 @@ describe('useFocus()', () => {
     // @ts-ignort
     expect(result.getByTestId('btn').textContent).toBe('unfocused')
     // @ts-ignore
-    act(() => raf.step({count: 1}))
+    act(() => step({count: 1}))
     expect(result.getByTestId('btn').textContent).toBe('focused')
   })
 
