@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, {useState} from 'react'
-import {render, act, fireEvent} from '@testing-library/react'
+import {render, fireEvent} from '@testing-library/react'
 // @ts-ignore
-import {reset, step} from '@essentials/raf'
+// import {reset, step} from '@essentials/raf'
 import useFocus from './index'
 
 describe('useFocus()', () => {
   // @ts-ignore
-  beforeEach(reset)
+  // beforeEach(reset)
 
   it('should focus when true', () => {
     const Component = ({focus}) => {
@@ -39,10 +40,6 @@ describe('useFocus()', () => {
     containerInstance.querySelectorAll = () => [btnInstance]
     expect(btnInstance.textContent).toBe('unfocused')
     result.rerender(<Component focus={true} />)
-    // @ts-ignort
-    expect(result.getByTestId('btn').textContent).toBe('unfocused')
-    // @ts-ignore
-    act(() => step({count: 1}))
     expect(result.getByTestId('btn').textContent).toBe('focused')
   })
 
@@ -77,7 +74,6 @@ describe('useFocus()', () => {
     containerInstance.querySelectorAll = () => [btnInstance]
     expect(btnInstance.textContent).toBe('unfocused')
     result.rerender(<Component focus={true} />)
-    expect(result.getByTestId('btn').textContent).toBe('unfocused')
     fireEvent.transitionEnd(containerInstance)
     expect(result.getByTestId('btn').textContent).toBe('focused')
   })
