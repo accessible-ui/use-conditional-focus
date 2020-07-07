@@ -1,62 +1,51 @@
 import * as React from 'react'
 import tabbable from '@accessible/tabbable'
 import useEvent from '@react-hook/event'
+import useLatest from '@react-hook/latest'
 
-const useConditionalFocus = <T extends HTMLElement = any>(
+function useConditionalFocus<T extends Window>(
+  target: T | null,
+  shouldFocus?: boolean,
+  options?: UseConditionalFocusOptions
+): void
+function useConditionalFocus<T extends Document>(
+  target: T | null,
+  shouldFocus?: boolean,
+  options?: UseConditionalFocusOptions
+): void
+function useConditionalFocus<T extends HTMLElement>(
+  target: React.RefObject<T> | T | null,
+  shouldFocus?: boolean,
+  options?: UseConditionalFocusOptions
+): void
+function useConditionalFocus(
+  target: any,
   shouldFocus = false,
-  options = defaultOptions
-): React.MutableRefObject<T | null> => {
-  const ref = React.useRef<T | null>(null)
-
-  // istanbul ignore next
-  if (typeof options === 'boolean') {
-    if (
-      typeof process !== 'undefined' &&
-      process.env.NODE_ENV !== 'production'
-    ) {
-      if (DID_WARN === false) {
-        console.warn(
-          '[@accessible-ui/use-conditional-focus] Using a `boolean` for the second argument has been deprecated. Use `{includeRoot: false}` instead.'
-        )
-        DID_WARN = true
-      }
-    }
-
-    options = {
-      preventScroll: false,
-      includeRoot: options,
-    }
-  }
-
-  const {includeRoot, preventScroll} = options
-  const _doFocus = (): void => {
-    if (!ref.current || !shouldFocus) return
-    const tabbableEls = tabbable(ref.current, includeRoot)
+  {includeRoot, preventScroll} = defaultOptions
+) {
+  const doFocus_ = () => {
+    const element = target && 'current' in target ? target.current : target
+    if (!element || !shouldFocus) return
+    const tabbableEls = tabbable(element, includeRoot)
     if (tabbableEls.length > 0) tabbableEls[0].focus({preventScroll})
   }
-  const doFocus = React.useRef(_doFocus)
-  doFocus.current = _doFocus
+  const doFocus = useLatest(doFocus_)
 
   React.useEffect(() => {
     doFocus.current()
-  }, [shouldFocus])
+  }, [doFocus, shouldFocus])
 
-  useEvent(ref, 'transitionend', _doFocus)
-  return ref
+  useEvent(target, 'transitionend', doFocus_)
 }
 
-const defaultOptions: ConditionalFocusOptions = {
+const defaultOptions: UseConditionalFocusOptions = {
   includeRoot: false,
   preventScroll: false,
 }
 
-let DID_WARN = false
-
-export type ConditionalFocusOptions =
-  | {
-      includeRoot?: boolean
-      preventScroll?: boolean
-    }
-  | boolean
+export type UseConditionalFocusOptions = {
+  includeRoot?: boolean
+  preventScroll?: boolean
+}
 
 export default useConditionalFocus

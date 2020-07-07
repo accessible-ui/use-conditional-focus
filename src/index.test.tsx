@@ -1,23 +1,18 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import React, {useState} from 'react'
-import {render, fireEvent} from '@testing-library/react'
-// @ts-ignore
-// import {reset, step} from '@essentials/raf'
+import * as React from 'react'
+import {render, fireEvent, screen} from '@testing-library/react'
 import useFocus from './index'
 
 describe('useFocus()', () => {
-  // @ts-ignore
-  // beforeEach(reset)
-
   it('should focus when true', () => {
     const Component = ({focus}) => {
-      const ref = useFocus(focus)
-      const [child, setChild] = useState<string | null>('unfocused')
+      const ref = React.useRef(null)
+      useFocus(ref, focus)
+      const [child, setChild] = React.useState<string | null>('unfocused')
 
       return (
-        <div ref={ref} data-testid="container">
+        <div ref={ref} data-testid='container'>
           <button
-            data-testid="btn"
+            data-testid='btn'
             onFocus={() => setChild('focused')}
             children={child}
           />
@@ -26,8 +21,8 @@ describe('useFocus()', () => {
     }
 
     const result = render(<Component focus={false} />)
-    const containerInstance = result.getByTestId('container')
-    const btnInstance = result.getByTestId('btn')
+    const containerInstance = screen.getByTestId('container')
+    const btnInstance = screen.getByTestId('btn')
     // @ts-ignore
     Object.defineProperty(btnInstance, 'offsetParent', {
       value: containerInstance,
@@ -38,20 +33,21 @@ describe('useFocus()', () => {
     }
     // @ts-ignore
     containerInstance.querySelectorAll = () => [btnInstance]
-    expect(btnInstance.textContent).toBe('unfocused')
+    expect(btnInstance).toHaveTextContent('unfocused')
     result.rerender(<Component focus={true} />)
-    expect(result.getByTestId('btn').textContent).toBe('focused')
+    expect(screen.getByTestId('btn')).toHaveTextContent('focused')
   })
 
   it('should focus when true and transition has ended', () => {
     const Component = ({focus}) => {
-      const ref = useFocus(focus)
-      const [child, setChild] = useState<string | null>('unfocused')
+      const ref = React.useRef(null)
+      useFocus(ref, focus)
+      const [child, setChild] = React.useState<string | null>('unfocused')
 
       return (
-        <div ref={ref} data-testid="container">
+        <div ref={ref} data-testid='container'>
           <button
-            data-testid="btn"
+            data-testid='btn'
             onFocus={() => setChild('focused')}
             children={child}
           />
@@ -60,8 +56,8 @@ describe('useFocus()', () => {
     }
 
     const result = render(<Component focus={false} />)
-    const containerInstance = result.getByTestId('container')
-    const btnInstance = result.getByTestId('btn')
+    const containerInstance = screen.getByTestId('container')
+    const btnInstance = screen.getByTestId('btn')
     // @ts-ignore
     Object.defineProperty(btnInstance, 'offsetParent', {
       value: containerInstance,
@@ -72,21 +68,22 @@ describe('useFocus()', () => {
     }
     // @ts-ignore
     containerInstance.querySelectorAll = () => [btnInstance]
-    expect(btnInstance.textContent).toBe('unfocused')
+    expect(btnInstance).toHaveTextContent('unfocused')
     result.rerender(<Component focus={true} />)
     fireEvent.transitionEnd(containerInstance)
-    expect(result.getByTestId('btn').textContent).toBe('focused')
+    expect(screen.getByTestId('btn')).toHaveTextContent('focused')
   })
 
   it('should not focus when elements are not tabbable', () => {
     const Component = ({focus}) => {
-      const ref = useFocus(focus)
-      const [child, setChild] = useState<string | null>('unfocused')
+      const ref = React.useRef(null)
+      useFocus(ref, focus)
+      const [child, setChild] = React.useState<string | null>('unfocused')
 
       return (
-        <div ref={ref} data-testid="container">
+        <div ref={ref} data-testid='container'>
           <button
-            data-testid="btn"
+            data-testid='btn'
             onFocus={() => setChild('focused')}
             children={child}
           />
@@ -95,8 +92,8 @@ describe('useFocus()', () => {
     }
 
     const result = render(<Component focus={false} />)
-    const containerInstance = result.getByTestId('container')
-    const btnInstance = result.getByTestId('btn')
+    const containerInstance = screen.getByTestId('container')
+    const btnInstance = screen.getByTestId('btn')
     // @ts-ignore
     Object.defineProperty(btnInstance, 'offsetParent', {
       value: null,
@@ -107,10 +104,10 @@ describe('useFocus()', () => {
     }
     // @ts-ignore
     containerInstance.querySelectorAll = () => [btnInstance]
-    expect(btnInstance.textContent).toBe('unfocused')
+    expect(btnInstance).toHaveTextContent('unfocused')
     result.rerender(<Component focus={true} />)
-    expect(result.getByTestId('btn').textContent).toBe('unfocused')
+    expect(screen.getByTestId('btn')).toHaveTextContent('unfocused')
     fireEvent.transitionEnd(containerInstance)
-    expect(result.getByTestId('btn').textContent).toBe('unfocused')
+    expect(screen.getByTestId('btn')).toHaveTextContent('unfocused')
   })
 })
