@@ -32,14 +32,19 @@ child of the provided root element, but you can optionally include the root as w
 ## Quick Start
 
 ```jsx harmony
+import * as React from 'react'
 import useConditionalFocus from '@accessible/use-conditional-focus'
 
 const Component = () => {
-  const [visible, setVisible] = useState(false)
-  const rootRef = useConditionalFocus(visible)
+  const ref = React.useRef(null)
+  const [visible, setVisible] = React.useState(false)
+  // Focuses the first focusable child in the `ref` element when
+  // visible is `true`
+  useConditionalFocus(ref, visible)
+
   return (
     <div>
-      <div ref={rootRef}>
+      <div ref={ref}>
         // This button will be focused when `visible` is true
         <button onClick={() => setVisible(false)}>Close me</button>
       </div>
@@ -51,28 +56,24 @@ const Component = () => {
 
 ## API
 
-```tsx
-useConditionalFocus<T extends HTMLElement = any>(
-  shouldFocus: boolean,
-  options: {includeRoot: boolean, preventScroll: boolean}
-)
-```
+### useConditionalFocus(target, shouldFocus, options?)
 
 #### Arguments
 
-| Prop        | Type                                                       | Default                                      | Required? | Description                                                                    |
-| ----------- | ---------------------------------------------------------- | -------------------------------------------- | --------- | ------------------------------------------------------------------------------ |
-| shouldFocus | `boolean`                                                  | `false`                                      | `Yes`     | Provide a `true` value here to focus the first focusable child in the element. |
-| options     | [`UseConditionalFocusOptions`](#useconditonalfocusoptions) | `{includeRoot: false, preventScroll: false}` | `No`      | See [`UseConditionalFocusOptions`](#useconditonalfocusoptions).                |
+| Prop        | Type                                                                                     | Default                                      | Required? | Description                                                                    |
+| ----------- | ---------------------------------------------------------------------------------------- | -------------------------------------------- | --------- | ------------------------------------------------------------------------------ |
+| target      | <code>React.RefObject&lt;T&gt; &#124; T &#124; Window &#124; Document &#124; null</code> |                                              | Yes       | A React ref, element, `window`, or `document`                                  |
+| shouldFocus | `boolean`                                                                                | `false`                                      | Yes       | Provide a `true` value here to focus the first focusable child in the element. |
+| options     | [`UseConditionalFocusOptions`](#useconditonalfocusoptions)                               | `{includeRoot: false, preventScroll: false}` | No        | See [`UseConditionalFocusOptions`](#useconditonalfocusoptions).                |
 
 #### `UseConditonalFocusOptions`
 
 | Prop          | Type      | Default | Required? | Description                                                                                                          |
 | ------------- | --------- | ------- | --------- | -------------------------------------------------------------------------------------------------------------------- |
-| includeRoot   | `boolean` | `false` | `No`      | When `true` this will try to focus on the root element in addition to its children.                                  |
-| preventScroll | `boolean` | `false` | `No`      | When `true` this will prevent your browser from scrolling the document to bring the newly-focused element into view. |
+| includeRoot   | `boolean` | `false` | No        | When `true` this will try to focus on the root element in addition to its children.                                  |
+| preventScroll | `boolean` | `false` | No        | When `true` this will prevent your browser from scrolling the document to bring the newly-focused element into view. |
 
-#### Returns `MutableRefObject<T>`
+#### Returns `void`
 
 ## LICENSE
 
