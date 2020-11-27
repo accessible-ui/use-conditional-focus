@@ -1,7 +1,6 @@
 import * as React from 'react'
 import tabbable from '@accessible/tabbable'
 import useEvent from '@react-hook/event'
-import useLatest from '@react-hook/latest'
 
 function useConditionalFocus<T extends Window>(
   target: T | null,
@@ -23,19 +22,31 @@ function useConditionalFocus(
   shouldFocus = false,
   {includeRoot, preventScroll} = defaultOptions
 ) {
-  const doFocus_ = () => {
-    const element = target && 'current' in target ? target.current : target
-    if (!element || !shouldFocus) return
-    const tabbableEls = tabbable(element, includeRoot)
-    if (tabbableEls.length > 0) tabbableEls[0].focus({preventScroll})
-  }
-  const doFocus = useLatest(doFocus_)
+  const didFocus = React.useRef(false)
+  const didFocusAfterEvent = React.useRef(false)
 
   React.useEffect(() => {
-    doFocus.current()
-  }, [doFocus, shouldFocus])
+    const element = target && 'current' in target ? target.current : target
+    if (!element || !shouldFocus || didFocus.current) return
+    const tabbableEls = tabbable(element, includeRoot)
+    if (tabbableEls.length > 0) tabbableEls[0].focus({preventScroll})
+    didFocus.current = true
+  }, [target, includeRoot, preventScroll, shouldFocus])
 
-  useEvent(target, 'transitionend', doFocus_)
+  React.useEffect(() => {
+    return () => {
+      didFocus.current = false
+      didFocusAfterEvent.current = false
+    }
+  }, [shouldFocus])
+
+  useEvent(target, 'transitionend', () => {
+    const element = target && 'current' in target ? target.current : target
+    if (!element || !shouldFocus || didFocusAfterEvent.current) return
+    const tabbableEls = tabbable(element, includeRoot)
+    if (tabbableEls.length > 0) tabbableEls[0].focus({preventScroll})
+    didFocusAfterEvent.current = true
+  })
 }
 
 const defaultOptions: UseConditionalFocusOptions = {
